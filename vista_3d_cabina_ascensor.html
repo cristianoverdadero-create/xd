@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vista 3D Cabina de Ascensor</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf0f0f0);
+
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 1.6, 3);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  const light1 = new THREE.DirectionalLight(0xffffff, 0.8);
+  light1.position.set(5, 10, 5);
+  scene.add(light1);
+
+  const light2 = new THREE.AmbientLight(0xffffff, 0.4);
+  scene.add(light2);
+
+  // Materials
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.6, roughness: 0.3 });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x999999, roughness: 0.6 });
+
+  // Cabin dimensions
+  const width = 2;
+  const depth = 1.6;
+  const height = 2.4;
+
+  // Walls
+  const backWall = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.05), wallMat);
+  backWall.position.set(0, height/2, -depth/2);
+  scene.add(backWall);
+
+  const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.05, height, depth), wallMat);
+  leftWall.position.set(-width/2, height/2, 0);
+  scene.add(leftWall);
+
+  const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.05, height, depth), wallMat);
+  rightWall.position.set(width/2, height/2, 0);
+  scene.add(rightWall);
+
+  // Floor
+  const floor = new THREE.Mesh(new THREE.BoxGeometry(width, 0.05, depth), floorMat);
+  floor.position.set(0, 0, 0);
+  scene.add(floor);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
+</body>
+</html>
